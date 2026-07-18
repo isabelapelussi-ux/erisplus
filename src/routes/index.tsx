@@ -2,8 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 const heroFootball = "/images/hero-football.jpg";
+const heroFootball2 = "/images/hero-football2.jpg";
 const heroAnime = "/images/hero-anime.jpg";
 const heroMovie = "/images/hero-movie.jpg";
+const heroMovie2 = "/images/hero-movie2.jpg";
 const heroSeries = "/images/hero-series.jpg";
 const heroAction = "/images/hero-action.jpg";
 const heroFantasy = "/images/hero-fantasy.jpg";
@@ -142,6 +144,18 @@ const CONTEUDOS_TAGS = ["📺 Ao Vivo Agora!", "🎬 Incluso!", "📡 Sem Taxa E
 function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [viewers, setViewers] = useState(3462);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setViewers((prev) => {
+        const delta = Math.floor(Math.random() * 81) - 40; // -40 a +40
+        const next = prev + delta;
+        return next < 3400 ? 3400 : next > 3600 ? 3600 : next;
+      });
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const links = document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]');
@@ -260,8 +274,14 @@ function LandingPage() {
       </header>
 
       {/* HERO */}
-      <section id="top">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 px-5 py-12 md:py-20 lg:grid-cols-2">
+      <section id="top" className="relative overflow-hidden">
+        <img
+          src="/images/hero-logoback.jpg"
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-[80%] w-auto opacity-10 object-contain"
+        />
+        <div className="mx-auto relative z-10 grid max-w-7xl grid-cols-1 items-start gap-12 px-5 py-8 md:py-14 lg:grid-cols-2">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 text-xs font-medium glass -mt-8">
               <span
@@ -326,7 +346,7 @@ function LandingPage() {
                 {[
                   { src: heroFootball, alt: "Futebol ao vivo" },
                   { src: heroAnime, alt: "Animes" },
-                  { src: heroMovie, alt: "Filmes" },
+                  { src: heroMovie2, alt: "Filmes" },
                   { src: heroSeries, alt: "Séries" },
                   { src: heroAction, alt: "Ação e blockbusters" },
                   { src: heroFantasy, alt: "Fantasia e aventura" },
@@ -345,7 +365,7 @@ function LandingPage() {
                 ))}
               </div>
               <div className="mt-4 flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm">
-                <span className="text-muted-foreground">▶ Assistindo agora</span>
+                <span className="text-muted-foreground"><span style={{ marginRight: 8 }}>▶</span> {viewers.toLocaleString()} pessoas assistindo agora</span>
                 <span className="font-medium" style={{ color: "var(--neon)" }}>
                   ao vivo · 4K
                 </span>
@@ -356,7 +376,7 @@ function LandingPage() {
       </section>
 
       {/* SOBRE */}
-      <section id="sobre-nos" className="mx-auto max-w-7xl px-5 py-16">
+      <section id="sobre-nos" className="mx-auto max-w-7xl px-5 pt-4 pb-10">
         <div className="mx-auto max-w-2xl text-center">
           <p
             className="text-base font-semibold uppercase tracking-widest"
@@ -392,7 +412,7 @@ function LandingPage() {
       </section>
 
       {/* CONTEÚDOS — FUTEBOL, FILMES, SÉRIES */}
-      <section id="conteudos" className="mx-auto max-w-7xl px-5 py-16">
+      <section id="conteudos" className="mx-auto max-w-7xl px-5 py-10">
         <div className="mx-auto max-w-2xl text-center">
           <p
             className="text-sm font-semibold uppercase tracking-widest"
@@ -411,7 +431,7 @@ function LandingPage() {
         <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
           {[
             {
-              image: heroFootball,
+              image: heroFootball2,
               title: "Futebol ao vivo",
               description:
                 "Assista a qualquer jogo, de qualquer campeonato, ao vivo. Brasileirão, Champions, Libertadores e muito mais.",
@@ -462,7 +482,7 @@ function LandingPage() {
       </section>
 
       {/* DEPOIMENTOS */}
-      <section id="depoimentos" className="pt-8 pb-16">
+      <section id="depoimentos" className="pt-8 pb-10">
         <div className="mx-auto max-w-7xl px-5">
           <div className="mx-auto max-w-2xl text-center">
             <p
@@ -501,7 +521,7 @@ function LandingPage() {
       </section>
 
       {/* PLANOS */}
-      <section id="planos" className="mx-auto max-w-7xl px-5 pt-8 pb-16">
+      <section id="planos" className="mx-auto max-w-7xl px-5 pt-8 pb-10">
         <div className="mx-auto max-w-2xl text-center">
           <p
             className="text-lg font-semibold uppercase tracking-widest"
@@ -572,7 +592,7 @@ function LandingPage() {
       </section>
 
       {/* FAQ / CONTATO */}
-      <section id="contato" className="mx-auto max-w-4xl px-5 py-16">
+      <section id="contato" className="mx-auto max-w-4xl px-5 py-10">
         <div className="text-center">
           <p
             className="text-sm font-semibold uppercase tracking-widest"
