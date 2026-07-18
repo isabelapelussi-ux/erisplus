@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const heroFootball = "/images/hero-football.jpg";
 const heroFootball2 = "/images/hero-football2.jpg";
@@ -145,6 +145,8 @@ function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [viewers, setViewers] = useState(3462);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const carouselCounterRef = useRef(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -154,6 +156,24 @@ function LandingPage() {
         return next < 3400 ? 3400 : next > 3600 ? 3600 : next;
       });
     }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const el = carouselRef.current;
+      if (!el) return;
+      carouselCounterRef.current += 1;
+      if (carouselCounterRef.current >= 4) {
+        el.style.transition = "none";
+        carouselCounterRef.current = 0;
+        el.style.transform = "translateX(0%)";
+        void el.offsetHeight;
+        el.style.transition = "";
+      } else {
+        el.style.transform = `translateX(-${carouselCounterRef.current * 100}%)`;
+      }
+    }, 2000);
     return () => clearInterval(timer);
   }, []);
 
@@ -279,7 +299,7 @@ function LandingPage() {
           src="/images/hero-logoback.jpg"
           alt=""
           aria-hidden
-          className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-[80%] w-auto opacity-10 object-contain"
+          className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-auto max-h-[80vh] w-1/2 opacity-10 object-contain hidden lg:block"
         />
         <div className="mx-auto relative z-10 grid max-w-7xl grid-cols-1 items-start gap-12 px-5 py-8 md:py-14 lg:grid-cols-2">
           <div>
@@ -291,7 +311,7 @@ function LandingPage() {
               Servidores online agora — 99,9% uptime
             </span>
             <h1
-              className="mt-6 font-display text-4xl font-bold leading-[1.1] sm:text-5xl sm:leading-[1.05] md:text-6xl bg-clip-text text-transparent"
+              className="mt-6 font-display text-4xl font-bold leading-[1.1] sm:text-5xl sm:leading-[1.05] md:text-6xl bg-clip-text text-transparent text-center sm:text-left"
               style={{ backgroundImage: "var(--gradient-primary)" }}
             >
               Tudo o que sua família gosta de assistir, em um só plano.
@@ -305,24 +325,24 @@ function LandingPage() {
                 href={wa("Olá! Quero solicitar o teste grátis de 4 horas.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full px-7 py-4 text-center text-base btn-cta hover:scale-[1.03]"
+                className="w-full rounded-full px-6 py-3.5 text-center btn-cta hover:scale-[1.03] sm:w-auto"
               >
                 🎁 Solicitar Teste Grátis de 4 Horas
               </a>
               <a
                 href="#planos"
-                className="rounded-full border border-border px-7 py-4 text-center text-base font-semibold glass transition hover:border-[color:var(--neon)]"
+                className="w-full rounded-full border border-border px-6 py-3.5 text-center font-semibold glass transition hover:border-[color:var(--neon)] hover:scale-[1.03] sm:w-auto"
               >
                 Conhecer Planos
               </a>
             </div>
-            <div className="mt-10 grid grid-cols-3 gap-6 border-t border-border pt-6">
+            <div className="mt-10 grid grid-cols-3 gap-1 sm:gap-6 border-t border-border pt-6 justify-items-center sm:justify-items-start">
               {[
                 ["32K+", "Conteúdos"],
                 ["4K", "Qualidade"],
                 ["24/7", "Suporte"],
               ].map(([n, l]) => (
-                <div key={l}>
+                <div key={l} className="text-center sm:text-left">
                   <div className="font-display text-2xl font-bold" style={{ color: "var(--neon)" }}>
                     {n}
                   </div>
@@ -342,7 +362,35 @@ function LandingPage() {
                 <span className="h-3 w-3 rounded-full bg-yellow-400/70" />
                 <span className="h-3 w-3 rounded-full bg-green-400/70" />
               </div>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+              <div className="overflow-hidden sm:hidden rounded-xl">
+                <div
+                  ref={carouselRef}
+                  className="flex transition-transform duration-500 ease-in-out"
+                >
+                  {[
+                    [heroFootball, heroAnime],
+                    [heroMovie2, heroSeries],
+                    [heroAction, heroFantasy],
+                    [heroFootball, heroAnime],
+                  ].map((pair, pi) => (
+                    <div key={pi} className="grid w-full shrink-0 grid-cols-2 gap-1">
+                      {pair.map((src, i) => (
+                        <div
+                          key={i}
+                          className="aspect-[2/3] overflow-hidden rounded-xl border border-border"
+                        >
+                          <img
+                            src={src}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="hidden sm:grid sm:grid-cols-3 sm:gap-3">
                 {[
                   { src: heroFootball, alt: "Futebol ao vivo" },
                   { src: heroAnime, alt: "Animes" },
@@ -364,11 +412,13 @@ function LandingPage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-border px-4 py-3 text-sm">
-                <span className="text-muted-foreground"><span style={{ marginRight: 8 }}>▶</span> {viewers.toLocaleString()} pessoas assistindo agora</span>
-                <span className="font-medium" style={{ color: "var(--neon)" }}>
-                  ao vivo · 4K
-                </span>
+              <div className="mt-4 rounded-xl border border-border px-4 py-3 text-sm">
+                <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between">
+                  <span className="text-muted-foreground"><span style={{ marginRight: 4 }}>▶</span> {viewers.toLocaleString()} pessoas assistindo agora</span>
+                  <span className="font-medium" style={{ color: "var(--neon)" }}>
+                    Ao vivo · 4K
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -537,10 +587,10 @@ function LandingPage() {
           </p>
         </div>
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-          {PLANS.map((p) => (
+          {PLANS.map((p, i) => (
             <div
               key={p.name}
-              className={`glass relative flex flex-col rounded-2xl p-8 transition ${p.highlight ? "scale-[1.02] border-2" : "hover:-translate-y-1"}`}
+              className={`glass relative flex flex-col rounded-2xl p-8 transition ${p.highlight ? "scale-[1.02] border-2" : "hover:-translate-y-1"} ${["order-2 md:order-none", "order-1 md:order-none", "order-3 md:order-none"][i]}`}
               style={
                 p.highlight
                   ? { borderColor: "var(--neon)", boxShadow: "var(--shadow-glow)" }
